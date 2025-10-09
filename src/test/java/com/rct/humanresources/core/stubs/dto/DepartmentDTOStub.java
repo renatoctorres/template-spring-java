@@ -11,7 +11,7 @@ public final class DepartmentDTOStub {
         var dto = new DepartmentDTO();
         dto.setDescription("Department description");
         dto.setName("Department Name");
-        dto.setId(random.nextLong());
+        dto.setId(String.valueOf(random.nextLong()));
 
         return dto;
     }

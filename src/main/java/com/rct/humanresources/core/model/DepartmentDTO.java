@@ -1,6 +1,7 @@
 package com.rct.humanresources.core.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,9 +12,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DepartmentDTO {
-    @JsonProperty("codigo")
-    private Long id;
+@AllArgsConstructor
+public class DepartmentDTO extends BaseDTO {
     @JsonProperty("nome")
     private String name;
     @JsonProperty("descricao")

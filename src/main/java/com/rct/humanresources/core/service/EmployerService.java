@@ -1,18 +1,22 @@
 package com.rct.humanresources.core.service;
 
+import com.rct.humanresources.core.mapper.EmployerMapper;
 import com.rct.humanresources.core.model.EmployerDTO;
-
-import java.util.List;
+import com.rct.humanresources.infra.persistence.entity.Employer;
+import com.rct.humanresources.infra.persistence.repository.EmployerRepository;
+import org.springframework.stereotype.Service;
 
 /**
  * EmployerService interface
  */
-public interface EmployerService {
-    EmployerDTO create(EmployerDTO dto);
-    EmployerDTO save(EmployerDTO dto);
-    EmployerDTO findById(Long id);
-    List<EmployerDTO> findAll();
-    void deleteById(Long id);
-    EmployerDTO update(EmployerDTO dto);
+@Service
+public class EmployerService extends BaseService<
+        Employer,
+        EmployerDTO,
+        EmployerRepository,
+        EmployerMapper> {
 
+    public EmployerService(EmployerRepository repository, EmployerMapper mapper) {
+        super(repository, mapper);
+    }
 }

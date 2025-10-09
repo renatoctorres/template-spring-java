@@ -5,7 +5,6 @@ import com.rct.humanresources.core.model.EmployerDTO;
 import com.rct.humanresources.core.mapper.EmployerMapper;
 import com.rct.humanresources.infra.persistence.entity.Employer;
 import com.rct.humanresources.infra.persistence.repository.EmployerRepository;
-import com.rct.humanresources.core.service.impl.EmployerServiceImpl;
 import com.rct.humanresources.core.stubs.dto.EmployerDTOStub;
 import com.rct.humanresources.core.stubs.entity.EmployerStub;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import java.util.List;
-import java.util.Optional;
+
+import module java.base;
+
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class EmployerServiceTest {
     @InjectMocks
-    private EmployerServiceImpl service;
+    private EmployerService service;
     @Mock
     private EmployerRepository repository;
     @Mock
@@ -37,7 +37,7 @@ class EmployerServiceTest {
     List<Employer> expectedModels;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         expectedModel = EmployerStub.any();
         expectedDTO = EmployerDTOStub.any();
         expectedDTOs = EmployerDTOStub.anyList();
@@ -52,7 +52,7 @@ class EmployerServiceTest {
         mockMapperModel();
         mockMapperDTO();
 
-        var actual = this.service.create(expectedDTO);
+        var actual = this.service.save(expectedDTO);
         assertEquals(expectedDTO, actual);
     }
 
@@ -72,10 +72,10 @@ class EmployerServiceTest {
     void testFindById() {
         doReturn(Optional.of(expectedModel))
                 .when(repository)
-                .findById(expectedDTO.getId());
+                .findById(Long.valueOf(expectedDTO.getId()));
         mockMapperDTO();
 
-        var actual = this.service.findById(expectedDTO.getId());
+        var actual = this.service.findById(Long.valueOf(expectedDTO.getId()));
         assertEquals(expectedDTO, actual);
     }
 
@@ -84,9 +84,9 @@ class EmployerServiceTest {
         var id = expectedDTO.getId();
         doReturn(empty())
                 .when(repository)
-                .findById(id);
+                .findById(Long.valueOf(id));
 
-        assertThrows(NoSuchElementFoundException.class, () -> this.service.findById(id));
+        assertThrows(NoSuchElementFoundException.class, () -> this.service.findById(Long.valueOf(id)));
 
     }
 
@@ -120,8 +120,8 @@ class EmployerServiceTest {
         var id = expectedDTO.getId();
         doNothing()
                 .when(repository)
-                .deleteById(id);
-        service.deleteById(id);
+                .deleteById(Long.valueOf(id));
+        service.delete(Long.valueOf(id));
 
         verify(repository, only()).deleteById(any());
     }
@@ -134,21 +134,23 @@ class EmployerServiceTest {
         mockMapperModel();
         mockMapperDTO();
 
-        var actual = service.update(expectedDTO);
+        doReturn(true).when(repository).existsById(1L);
+
+        var actual = service.update(1L,expectedDTO);
 
         assertEquals(expectedDTO, actual);
     }
 
     private void mockMapperModel() {
-        doReturn(expectedModel).when(mapper).fromDTO(expectedDTO);
+        doReturn(expectedModel).when(mapper).toEntity(expectedDTO);
     }
 
     private void mockMapperDTO() {
-        doReturn(expectedDTO).when(mapper).fromModel(expectedModel);
+        doReturn(expectedDTO).when(mapper).toDTO(expectedModel);
     }
 
     private void mockMapperList() {
-        doReturn(expectedDTOs).when(mapper).fromModels(expectedModels);
+        doReturn(expectedDTOs).when(mapper).toDTOList(expectedModels);
     }
 
 

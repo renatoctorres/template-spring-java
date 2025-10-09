@@ -12,7 +12,7 @@ public class EmployerDTOStub {
     public static EmployerDTO any(){
         var dto = new EmployerDTO();
         dto.setFullName("Full Name");
-        dto.setId(random.nextLong());
+        dto.setId(String.valueOf(random.nextLong()));
         return dto;
     }
 

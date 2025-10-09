@@ -20,7 +20,7 @@ import static org.hibernate.annotations.FetchMode.SELECT;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Employer {
+public class Employer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = AUTO)

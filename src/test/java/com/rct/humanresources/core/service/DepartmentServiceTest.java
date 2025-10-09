@@ -3,13 +3,11 @@ package com.rct.humanresources.core.service;
 import com.rct.humanresources.infra.delivery.exception.NoSuchElementFoundException;
 import com.rct.humanresources.core.model.DepartmentDTO;
 import com.rct.humanresources.core.mapper.DepartmentMapper;
-import com.rct.humanresources.core.service.impl.DepartmentServiceImpl;
 import com.rct.humanresources.infra.persistence.entity.Department;
 import com.rct.humanresources.infra.persistence.repository.DepartmentRepository;
 import com.rct.humanresources.infra.persistence.repository.EmployerRepository;
 import com.rct.humanresources.core.stubs.dto.DepartmentDTOStub;
 import com.rct.humanresources.core.stubs.entity.DepartmentStub;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,19 +15,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.Optional;
+import module java.base;
 
-import static java.util.Collections.emptyList;
-import static java.util.Optional.empty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class DepartmentServiceTest {
     @InjectMocks
-    private DepartmentServiceImpl service;
+    private DepartmentService service;
     @Mock
     private DepartmentRepository repository;
     @Mock
@@ -43,7 +42,7 @@ class DepartmentServiceTest {
     List<Department> expectedModels;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         expectedModel = DepartmentStub.any();
         expectedDTO = DepartmentDTOStub.any();
         expectedDTOs = DepartmentDTOStub.anyList();
@@ -57,8 +56,8 @@ class DepartmentServiceTest {
                 .save(expectedModel);
         mockMapperModel();
 
-        var actual = this.service.create(expectedDTO);
-        Assertions.assertEquals(expectedDTO, actual);
+        var actual = this.service.save(expectedDTO);
+        assertEquals(expectedDTO, actual);
     }
 
     @Test
@@ -69,29 +68,28 @@ class DepartmentServiceTest {
         mockMapperModel();
 
         var actual = this.service.save(expectedDTO);
-        Assertions.assertEquals(expectedDTO, actual);
+        assertEquals(expectedDTO, actual);
     }
 
     @Test
     void testFindById() {
         doReturn(Optional.of(expectedModel))
                 .when(repository)
-                .findById(expectedDTO.getId());
+                .findById(any());
         mockMapperDTO();
 
-        var actual = this.service.findById(expectedDTO.getId());
+        var actual = this.service.findById(1L);
 
-        Assertions.assertEquals(expectedDTO, actual);
+        assertEquals(expectedDTO, actual);
     }
 
     @Test()
     void testFindByIdNotFound() {
-        var id = expectedDTO.getId();
-        doReturn(empty())
+        doReturn(Optional.empty())
                 .when(repository)
-                .findById(id);
+                .findById(any());
 
-        assertThrows(NoSuchElementFoundException.class, () -> this.service.findById(id));
+        assertThrows(NoSuchElementFoundException.class, () -> this.service.findById(1L));
 
     }
 
@@ -110,27 +108,23 @@ class DepartmentServiceTest {
 
     @Test
     void testFindAllEmptyList() {
-        doReturn(emptyList())
+        doReturn(Collections.emptyList())
                 .when(repository)
                 .findAll();
 
         var actualList = this.service.findAll();
 
-        assertEquals(emptyList(), actualList);
+        assertEquals(Collections.emptyList(), actualList);
         assertEquals(0, actualList.size());
     }
 
     @Test
     void testDeleteById() {
-        var id = expectedDTO.getId();
         doNothing()
                 .when(repository)
-                .deleteById(id);
-        doNothing()
-                .when(employerRepository)
-                .deleteByDepartmentId(id);
+                .deleteById(1L);
 
-        service.deleteById(id);
+        service.delete(1L);
 
         verify(repository, only()).deleteById(any());
     }
@@ -142,20 +136,24 @@ class DepartmentServiceTest {
                 .save(any());
         mockMapperModel();
 
-        var actual = service.update(expectedDTO);
+        doReturn(true).when(repository).existsById(1L);
 
-        Assertions.assertEquals(expectedDTO, actual);
+        var actual = service.update(1L, expectedDTO);
+
+        assertEquals(expectedDTO, actual);
     }
 
     private void mockMapperModel() {
-        doReturn(expectedModel).when(mapper).fromDTO(expectedDTO);doReturn(expectedDTO).when(mapper).fromModel(expectedModel);
+        doReturn(expectedModel).when(mapper).toEntity(expectedDTO);
+        doReturn(expectedDTO).when(mapper).toDTO(expectedModel);
     }
+
     private void mockMapperDTO() {
-        doReturn(expectedDTO).when(mapper).fromModel(expectedModel);
+        doReturn(expectedDTO).when(mapper).toDTO(expectedModel);
     }
 
     private void mockMapperList() {
-        doReturn(expectedDTOs).when(mapper).fromModels(expectedModels);
+        doReturn(expectedDTOs).when(mapper).toDTOList(expectedModels);
     }
 
 }

@@ -7,8 +7,8 @@ import com.rct.humanresources.core.stubs.dto.EmployerDTOStub;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(EmployerController.class)
 @ContextConfiguration(classes= TemplateSpringBootApplication.class)
 class EmployerControllerTest {
-    @MockBean
+    @MockitoBean
     private EmployerService service;
     @Autowired
     private MockMvc mockMvc;
