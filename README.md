@@ -92,7 +92,7 @@ http://localhost:8080/v3/api-docs
 Run the Maven Test command:
 
 ```bash
-  mvn test
+  mvn clean test
 ```
 
 To run tests with coverage (JaCoCo):
@@ -117,3 +117,7 @@ To run tests with coverage (JaCoCo):
     <img src="https://skillicons.dev/icons?i=docker" alt="Docker" /> 
     <img src="https://dbdb.io/media/logos/h2-logo.svg" width="48" height="48" alt="H2 Database" /> 
 </p>
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
